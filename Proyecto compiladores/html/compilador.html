@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Compilador 1.0</title>
+  <link rel="stylesheet" href="./../css/compilador.css">
+</head>
+<body>
+  <header>
+    <h1>Compiladores</h1>
+    <nav>
+      <ul>
+        <li><a href="./../index.html">Inicio</a></li>
+        <li><a href="manual Tuto++.pdf" download>Manual de usuario</a></li>
+        <li><a href="https://github.com/jelantan/PROYECTO-COMPILADORES/wiki/#alfabeto-de-lenguaje-tuto" target="_blank">Documentación</a></li>
+        <li><a href="https://github.com/jelantan/PROYECTO-COMPILADORES" target="_blank">Github</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <div class="compiler-container">
+    <textarea id="codeInput" class="code-input" placeholder="Ingrese el código fuente a compilar" maxlength="1000" oninput="updateCounter()"></textarea>
+    <div id="counter"></div>
+    <div class="output"></div>
+    <div class="tokens-container">
+      <h2>Tokens Analizados:</h2>
+      <div id="tokensOutput"></div>
+    </div>
+    <div class="options">
+      <button class="compile-btn" onclick="compile()">Compilar</button>
+      <input type="file" id="fileInput" style="display: none;" accept=".ttp">
+      <button id="uploadBtn" class="upload-btn" onclick="document.getElementById('fileInput').click()">Cargar Archivo</button>
+      <button id="saveBtn" class="save-btn" onclick="saveFile()">Guardar Archivo .ttp</button>
+    </div>
+  </div>
+
+<script>
+  function updateCounter() {
+    const textarea = document.getElementById('codeInput');
+    const counter = document.getElementById('counter');
+    const remainingChars = textarea.maxLength - textarea.value.length;
+    counter.textContent = `${remainingChars} caracteres restantes`;
+  }
+</script>
+  <script src="./../js/FileHandler.js"></script>
+  <script src="./../js/Compiler.js"></script>
+</body>
+</html>
