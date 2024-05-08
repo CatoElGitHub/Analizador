@@ -9,15 +9,17 @@ const TokenType = {
 
 // Clase Token
 const Token = class {
-    constructor(type, value) {
+    constructor(type, value, linea) {
         this.type = type;
         this.value = value;
+        this.linea = linea; // Agregar número de línea
     }
 };
 
 function lex(input) {
     const tokens = [];
     let current = 0;
+    let currentLine = 1; // Variable para rastrear el número de línea actual
 
     while (current < input.length) {
         let char = input[current];
@@ -29,7 +31,7 @@ function lex(input) {
                 value += char;
                 char = input[++current];
             }
-            tokens.push(new Token(TokenType.NUMBER, value));
+            tokens.push(new Token(TokenType.NUMBER, value, currentLine));
             continue;
         }
 
@@ -41,22 +43,25 @@ function lex(input) {
                 char = input[++current];
             }
             if (isKeyword(value)) {
-                tokens.push(new Token(TokenType.KEYWORD, value));
+                tokens.push(new Token(TokenType.KEYWORD, value, currentLine));
             } else {
-                tokens.push(new Token(TokenType.IDENTIFIER, value));
+                tokens.push(new Token(TokenType.IDENTIFIER, value, currentLine));
             }
             continue;
         }
 
         // Identificar operadores y puntuación
         if (/[+\-*\/=(),;]/.test(char)) {
-            tokens.push(new Token(TokenType.OPERATOR, char));
+            tokens.push(new Token(TokenType.OPERATOR, char, currentLine));
             current++;
             continue;
         }
 
         // Ignorar espacios en blanco y saltos de línea
         if (/\s/.test(char)) {
+            if (char === '\n') { // Incrementar el número de línea al encontrar un salto de línea
+                currentLine++;
+            }
             current++;
             continue;
         }
@@ -76,12 +81,26 @@ function isKeyword(word) {
 function mostrarResultado(tokens) {
     const tokensOutput = document.getElementById('tokensOutput');
     tokensOutput.innerHTML = '';
-    tokens.forEach(token => {
-        const tokenDiv = document.createElement('div');
-        tokenDiv.classList.add('token');
-        tokenDiv.textContent = `Tipo: ${token.type}, Valor: ${token.value}`;
-        tokensOutput.appendChild(tokenDiv);
+
+    // Crear tabla
+    const table = document.createElement('table');
+    const headerRow = table.insertRow();
+    ['Línea', 'Token'].forEach(headerText => {
+        const header = document.createElement('th');
+        header.textContent = headerText;
+        headerRow.appendChild(header);
     });
+
+    // Llenar la tabla con los tokens
+    tokens.forEach(token => {
+        const row = table.insertRow();
+        const cell1 = row.insertCell();
+        const cell2 = row.insertCell();
+        cell1.textContent = token.linea; // Agregar el número de línea
+        cell2.textContent = `${token.type}: ${token.value}`;
+    });
+
+    tokensOutput.appendChild(table);
 }
 
 function mostrarError(error) {

@@ -20,29 +20,64 @@
   </header>
 
   <div class="compiler-container">
-    <textarea id="codeInput" class="code-input" placeholder="Ingrese el código fuente a compilar" maxlength="1000" oninput="updateCounter()"></textarea>
-    <div id="counter"></div>
-    <div class="output"></div>
-    <div class="tokens-container">
-      <h2>Tokens Analizados:</h2>
-      <div id="tokensOutput"></div>
-    </div>
-    <div class="options">
-      <button class="compile-btn" onclick="compile()">Compilar</button>
-      <input type="file" id="fileInput" style="display: none;" accept=".ttp">
-      <button id="uploadBtn" class="upload-btn" onclick="document.getElementById('fileInput').click()">Cargar Archivo</button>
-      <button id="saveBtn" class="save-btn" onclick="saveFile()">Guardar Archivo .ttp</button>
+    <div class="code-editor">
+      <div class="line-numbers" id="lineNumbers"></div>
+      <textarea id="codeInput" class="code-input" placeholder="Ingrese el código fuente a compilar" maxlength="1000" oninput="updateLineNumbers()"></textarea>
     </div>
   </div>
+  <div class="tokens-container">
+    <h2>Tokens Analizados:</h2>
+    <div id="tokensOutput"></div>
+  </div>
+  <div class="options">
+    <button class="compile-btn" onclick="compile()">Compilar</button>
+    <input type="file" id="fileInput" style="display: none;" accept=".ttp">
+    <button id="uploadBtn" class="upload-btn" onclick="document.getElementById('fileInput').click()">Cargar Archivo</button>
+    <button id="saveBtn" class="save-btn" onclick="saveFile()">Guardar Archivo .ttp</button>
+  </div>
 
-<script>
-  function updateCounter() {
-    const textarea = document.getElementById('codeInput');
-    const counter = document.getElementById('counter');
-    const remainingChars = textarea.maxLength - textarea.value.length;
-    counter.textContent = `${remainingChars} caracteres restantes`;
-  }
-</script>
+  <div id="counter"></div>
+
+  <script>
+    function updateLineNumbers() {
+    const lines = codeInput.value.split('\n');
+    const lineNumbersHTML = lines.map((_, index) => `${index + 1}`).join('\n');
+    lineNumbers.textContent = lineNumbersHTML;
+    }
+  </script>
+
+  <script>
+    const codeInput = document.getElementById('codeInput');
+    const lineNumbers = document.getElementById('lineNumbers');
+
+    // Función para sincronizar el desplazamiento vertical del textarea con los números de línea
+    function syncScroll() {
+      lineNumbers.scrollTop = codeInput.scrollTop;
+    }
+
+    // Función para ajustar la altura de los números de línea según la altura del textarea
+    function updateLineNumbersHeight() {
+      lineNumbers.style.height = `${codeInput.scrollHeight}px`;
+    }
+
+    // Agregar evento de desplazamiento al textarea
+    codeInput.addEventListener('scroll', syncScroll);
+
+    // Actualizar la altura de los números de línea al cargar la página y al cambiar el contenido del textarea
+    window.addEventListener('DOMContentLoaded', updateLineNumbersHeight);
+    codeInput.addEventListener('input', updateLineNumbersHeight);
+
+  </script>
+
+  <script>
+    function updateCounter() {
+      const textarea = document.getElementById('codeInput');
+      const counter = document.getElementById('counter');
+      const remainingChars = textarea.maxLength - textarea.value.length;
+      counter.textContent = `${remainingChars} caracteres restantes`;
+    }
+  </script>
+
   <script src="./../js/FileHandler.js"></script>
   <script src="./../js/Compiler.js"></script>
 </body>
