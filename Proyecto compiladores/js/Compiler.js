@@ -1,12 +1,32 @@
 // Definición de tokens
 const TokenType = {
-    IDENTIFIER: 'IDENTIFIER',
-    NUMBER: 'NUMBER',
-    OPERATOR: 'OPERATOR',
-    PUNCTUATION: 'PUNCTUATION',
-    KEYWORD: 'KEYWORD',
+    IDENTIFICADOR: 'IDENTIFICADOR',
+    NUMERO: 'NUMERO',
+    OPERADOR: 'OPERADOR',
+    PUNTUACION: 'PUNTUACION',
+    ECONTROL: 'ECONTROL',
+    ACCESO: 'ACCESO',
+    METODO: 'METODO',
+    CICLO: 'CICLO',
+    PALABRACLAVE: 'PALABRACLAVE',
+    INFORMACION: 'INFORMACION',
+    VARIABLE: 'VARIABLE',
+    PALABRARESERVADA: 'PALABRARESERVADA',
     ERROR: 'ERROR' // Token para errores
 };
+
+// Definición de palabras clave y variables
+const palabrasClave = ['ditto', 'eclosion', 'contraataque', 'antidoto', 'veneno', 'margcargo', 'silvally', 'bici', 'throh', 'arceus', 'xatu'];
+const variables = ['roca', 'agua', 'acero', 'fuego', 'bicho', 'onix', 'combee', 'alakazam', 'doublade', 'kakuna', 'hada', 'minun', 'eter'];
+const eControles = ['slow', 'king', 'bro', 'pikachu', 'pika', 'chispa', 'chu'];
+const informaciones = ['grunido', 'mordisco'];
+const ciclos = ['klink', 'klang', 'entei'];
+const metodos = ['starly'];
+const accesos = ['masters', 'poke', 'super', 'ultra', 'movimiento'];
+const palabrasReservadas = ['ditto', 'eclosion', 'contraataque', 'antidoto', 'veneno', 'margcargo', 'silvally', 'bici', 'throh', 'arceus', 'xatu',
+'roca', 'agua', 'acero', 'fuego', 'bicho', 'onix', 'combee', 'alakazam', 'doublade', 'kakuna', 'hada', 'minun', 'eter', 'slow', 'king', 'bro', 'pikachu',
+'pika', 'chispa', 'chu', 'grunido', 'mordisco', 'klink', 'klang', 'entei', 'starly', 'masters', 'poke', 'super', 'ultra', 'movimiento'];
+const identificadores = /^[a-zA-Z_$][a-zA-Z0-9_$]*$/;
 
 // Clase Token
 class Token {
@@ -22,16 +42,6 @@ function lex(input) {
     let current = 0;
     let currentLine = 1;
 
-    const keywords = ['if', 'else', 'while', 'for', 'function', 'return', 'var', 'const', 'let'];
-
-    function sugerirCorreccion(word) {
-        const sugerencias = keywords.filter(keyword => levenshteinDistance(keyword, word) <= 2);
-        if (sugerencias.length > 0) {
-            return `Posible palabra mal escrita. Puede que quieras decir: ${sugerencias.join(', ')}`;
-        }
-        return '';
-    }
-
     while (current < input.length) {
         let char = input[current];
 
@@ -41,16 +51,26 @@ function lex(input) {
                 value += char;
                 char = input[++current];
             }
-            if (keywords.includes(value)) {
-                tokens.push(new Token(TokenType.KEYWORD, value, currentLine));
-            } else if (variables(value)) {
-                tokens.push(new Token(TokenType.IDENTIFIER, value, currentLine));
-            } else if (estructuraControl(value)) {
-                tokens.push(new Token(TokenType.IDENTIFIER, value, currentLine));
+            if (palabrasClave.includes(value)) {
+                tokens.push(new Token(TokenType.PALABRACLAVE, value, currentLine));
+            } else if (variables.includes(value)) {
+                tokens.push(new Token(TokenType.VARIABLE, value, currentLine));
+            } else if (eControles.includes(value)) {
+                tokens.push(new Token(TokenType.ECONTROL, value, currentLine));
+            } else if (informaciones.includes(value)) {
+                tokens.push(new Token(TokenType.INFORMACION, value, currentLine));
+            } else if (ciclos.includes(value)) { 
+                tokens.push(new Token(TokenType.CICLO, value, currentLine));
+            }else if (metodos.includes(value)) {
+                tokens.push(new Token(TokenType.METODO, value, currentLine));
+            } else if (accesos.includes(value)) {
+                tokens.push(new Token(TokenType.ACCESO, value, currentLine));
             } else {
                 const sugerencia = sugerirCorreccion(value);
                 if (sugerencia !== '') {
                     tokens.push(new Token(TokenType.ERROR, sugerencia, currentLine));
+                } else if (identificadores.test(value)){
+                    tokens.push(new Token(TokenType.IDENTIFICADOR, value, currentLine));
                 } else {
                     tokens.push(new Token(TokenType.ERROR, value, currentLine));
                 }
@@ -64,15 +84,16 @@ function lex(input) {
                 value += char;
                 char = input[++current];
             }
-            tokens.push(new Token(TokenType.NUMBER, value, currentLine));
+            tokens.push(new Token(TokenType.NUMERO, value, currentLine));
             continue;
         }
 
-        if (/[+\-*\/=(),;]/.test(char)) {
-            tokens.push(new Token(TokenType.OPERATOR, char, currentLine));
+        if (/[+\-*\/=()"{}[\],;]/.test(char)) {
+            tokens.push(new Token(TokenType.OPERADOR, char, currentLine));
             current++;
             continue;
-        }
+        }        
+        
 
         if (/\s/.test(char)) {
             if (char === '\n') {
@@ -89,25 +110,30 @@ function lex(input) {
     return tokens;
 }
 
+function sugerirCorreccion(token) {
+    const sugerencias = palabrasReservadas.filter(PALABRARESERVADA => levenshteinDistance(PALABRARESERVADA, token) <= 2);
+    if (sugerencias.length > 0) {
+        return `Posible palabra mal escrita. Puede que quieras decir: ${sugerencias.join(', ')}`;
+    }
+    return '';
+}
+
 function levenshteinDistance(a, b) {
     if (a.length === 0) return b.length;
     if (b.length === 0) return a.length;
 
     const matrix = [];
 
-    // Increment along the first column of each row
-    let i;
+    let i, j;
+
     for (i = 0; i <= b.length; i++) {
         matrix[i] = [i];
     }
 
-    // Increment each column in the first row
-    let j;
     for (j = 0; j <= a.length; j++) {
         matrix[0][j] = j;
     }
 
-    // Fill in the rest of the matrix
     for (i = 1; i <= b.length; i++) {
         for (j = 1; j <= a.length; j++) {
             if (b.charAt(i - 1) === a.charAt(j - 1)) {
@@ -122,17 +148,30 @@ function levenshteinDistance(a, b) {
         }
     }
 
-    return matrix[b.length][a.length];
-}
+    // Verificar coincidencias basadas en la longitud de la palabra
+    let requiredMatches = 0;
+    if (b.length === 3) {
+        requiredMatches = 2;
+    } else if (b.length === 4) {
+        requiredMatches = 3;
+    } else if (b.length >= 5) {
+        requiredMatches = 4;
+    }
 
-function variables(word) {
-    const variable = ['roca', 'agua', 'acero', 'fuego', 'bicho', 'onix', 'combee', 'alakazam', 'doublade', 'kakuna', 'hada', 'minun', 'eter'];
-    return variable.includes(word);
-}
+    // Contar coincidencias en el lugar correcto
+    let matchingLetters = 0;
+    for (i = 0; i < b.length; i++) {
+        if (b.charAt(i) === a.charAt(i)) {
+            matchingLetters++;
+        }
+    }
 
-function estructuraControl(word) {
-    const controles = ['slow', 'king', 'bro', 'pikachu', 'pika', 'chispa', 'chu'];
-    return controles.includes(word);
+    // Devolver la distancia de Levenshtein si se cumplen las condiciones de coincidencia requeridas
+    if (matchingLetters >= requiredMatches) {
+        return matrix[b.length][a.length];
+    } else {
+        return Infinity; // No sugiere corrección si no se cumplen las condiciones de coincidencia requeridas
+    }
 }
 
 function mostrarTokens(tokens) {
