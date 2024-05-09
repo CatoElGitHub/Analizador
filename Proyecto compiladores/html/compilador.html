@@ -12,40 +12,51 @@
     <nav>
       <ul>
         <li><a href="./../index.html">Inicio</a></li>
-        <li><a href="manual Tuto++.pdf" download>Manual de usuario</a></li>
-        <li><a href="https://github.com/jelantan/PROYECTO-COMPILADORES/wiki/#alfabeto-de-lenguaje-tuto" target="_blank">Documentación</a></li>
+        <li><a href="manual páginal tuto+.pdf" download>Manual de usuario</a></li>
+        <li><a href="manual Tuto++.pdf" download>Documentación</a></li>
         <li><a href="https://github.com/jelantan/PROYECTO-COMPILADORES" target="_blank">Github</a></li>
       </ul>
     </nav>
   </header>
 
   <div class="compiler-container">
-    <div class="code-editor">
+    <div class="compiler">
       <div class="line-numbers" id="lineNumbers"></div>
-      <textarea id="codeInput" class="code-input" placeholder="Ingrese el código fuente a compilar" maxlength="1000" oninput="updateLineNumbers()"></textarea>
+      <textarea id="codeInput" class="code-input" placeholder="Ingrese el código fuente a compilar" oninput="updateLineNumbers()" onkeydown="handleKeyDown(event)"></textarea>
+    <div class="table-container">
+      <table id="tokensTable" border="2" style="text-align: center; width: 100%; height: 90%;">
+        <caption>TOKENS</caption>
+        <thead>
+            <tr>
+                <th>Linea</th>
+                <th>Token</th>
+                <th>Expresion</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>  .</td>
+                <td>  .</td>
+                <td>  .</td>
+            </tr>
+        </tbody>
+    </table>
+    </div>
+    </div>
+    <div class="output"></div>
+    <div class="options">
+      <button class="compile-btn" onclick="compile()">Compilar</button>
+      <input type="file" id="fileInput" style="display: none;" accept=".ttp" onchange="handleFile()">
+      <label for="fileInput" class="upload-btn">Cargar Archivo</label>
+      <button class="save-btn" onclick="saveFile()">Guardar Archivo .ttp</button>
     </div>
   </div>
-  <div class="tokens-container">
-    <h2>Tokens Analizados:</h2>
-    <div id="tokensOutput"></div>
-  </div>
-  <div class="options">
-    <button class="compile-btn" onclick="compile()">Compilar</button>
-    <input type="file" id="fileInput" style="display: none;" accept=".ttp">
-    <button id="uploadBtn" class="upload-btn" onclick="document.getElementById('fileInput').click()">Cargar Archivo</button>
-    <button id="saveBtn" class="save-btn" onclick="saveFile()">Guardar Archivo .ttp</button>
-  </div>
 
-  <div id="counter"></div>
+  <div class="output" id="tokensOutput"></div>
 
-  <script>
-    function updateLineNumbers() {
-    const lines = codeInput.value.split('\n');
-    const lineNumbersHTML = lines.map((_, index) => `${index + 1}`).join('\n');
-    lineNumbers.textContent = lineNumbersHTML;
-    }
-  </script>
-
+  <script src="./../js/cargarCodigo.js"></script>
+  <script src="./../js/compiler.js"></script>
+  
   <script>
     const codeInput = document.getElementById('codeInput');
     const lineNumbers = document.getElementById('lineNumbers');
@@ -55,30 +66,30 @@
       lineNumbers.scrollTop = codeInput.scrollTop;
     }
 
-    // Función para ajustar la altura de los números de línea según la altura del textarea
-    function updateLineNumbersHeight() {
-      lineNumbers.style.height = `${codeInput.scrollHeight}px`;
-    }
-
     // Agregar evento de desplazamiento al textarea
     codeInput.addEventListener('scroll', syncScroll);
-
-    // Actualizar la altura de los números de línea al cargar la página y al cambiar el contenido del textarea
-    window.addEventListener('DOMContentLoaded', updateLineNumbersHeight);
-    codeInput.addEventListener('input', updateLineNumbersHeight);
-
   </script>
 
   <script>
-    function updateCounter() {
-      const textarea = document.getElementById('codeInput');
-      const counter = document.getElementById('counter');
-      const remainingChars = textarea.maxLength - textarea.value.length;
-      counter.textContent = `${remainingChars} caracteres restantes`;
-    }
-  </script>
+  function updateLineNumbers() {
+    var code = document.getElementById("codeInput").value;
+    var lines = code.split("\n").length;
+    var lineNumbers = "";
 
-  <script src="./../js/FileHandler.js"></script>
-  <script src="./../js/Compiler.js"></script>
+    for (var i = 1; i <= lines; i++) {
+      lineNumbers += i + "<br>";
+    }
+
+    document.getElementById("lineNumbers").innerHTML = lineNumbers;
+  }
+
+  function handleKeyDown(event) {
+    if (event.key === "Enter") {
+      updateLineNumbers();
+    }
+  }
+
+  window.onload = updateLineNumbers;
+  </script>
 </body>
 </html>

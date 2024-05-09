@@ -34,44 +34,70 @@ nav ul li a {
 }
 
 .compiler-container {
-    max-width: 100%; /* Cambiamos esto a 100% para que ocupe todo el ancho disponible */
+    max-width: 100vw;
     margin: 50px;
     background-color: #fff;
     border-radius: 5px;
     padding: 20px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+    display: grid;
+    gap: 30px;
+}
+.compiler{
     display: flex;
-    flex-direction: column; /* Asegura que los elementos internos se apilen verticalmente */
-  }  
+    gap: 2%;
+}
+
+.line-numbers {
+    width: 40px; /* Ancho de los números de línea */
+    padding: 10px;
+    background-color: #ffffff;
+    border-right: 1px solid #ffffff;
+    text-align: right;
+    white-space: pre-wrap; /* Permitir saltos de línea */
+    overflow-y: auto; /* Agregar desplazamiento vertical si es necesario */
+    overflow: hidden; /* Ocultar el desplazamiento horizontal */
+    height: 200px; /* Establece la altura máxima del textarea */
+    line-height: 1.5;
+}
 
 .code-input {
-    width: 100%; /* Ancho del textarea */
-    max-width: 800px; /* Ancho máximo para evitar que se extienda demasiado */
+    width: calc(100% - 50px); /* Restar el ancho de los números de línea */
+    height: 200px;
     padding: 10px;
     font-size: 16px;
-    border: 1px solid #ccc;
+    border: 1px solid #000000;
     border-radius: 5px;
     resize: none;
     overflow-y: auto;
     tab-size: 4;
     white-space: pre-wrap;
-    max-height: 400px; /* Establece la altura máxima del textarea */
-    line-height: 1.5; /* Establece el espacio entre líneas a 1 para eliminar los espacios entre líneas */
+    line-height: 1.5;
+}
+
+.token {
+    width: 45%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #000000;
+    border-radius: 5px;
+    overflow: auto;
+    tab-size: 4;
+    line-height: 1.5;
 }
 
 .output {
-    flex: 1;
+    width: inherit;
+    height: 50px;
     padding: 10px;
-    border: 1px solid #ccc;
+    border: 1px solid #000000;
     border-radius: 5px;
     overflow: auto;
     line-height: 1.5;
 }
-
 .options {
-    text-align: right;
+    text-align: center;
 }
-
 .compile-btn, .upload-btn, .save-btn {
     padding: 10px 20px;
     background-color: #007bff;
@@ -79,40 +105,22 @@ nav ul li a {
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    border: #000000 1px solid;
 }
 
-.upload-btn:hover {
+.upload-btn:hover, .compile-btn:hover, .save-btn:hover {
     background-color: #0056b3;
+
 }
 
-.tokens-container {
-    flex: 1;
-    padding: 10px;
-    margin-top: 20px;
+.table-container {
+    width: 100%;
+    height: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+    text-align: center; 
 }
 
-.token {
-    padding: 5px;
-    margin-bottom: 5px;
-    background-color: #f0f0f0;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-.line-numbers {
-    width: 40px; /* Ancho de los números de línea */
-    padding: 10px;
-    background-color: #f0f0f0;
-    border-right: 1px solid #ccc;
-    text-align: right;
-    white-space: pre-wrap; /* Permitir saltos de línea */
-    overflow-y: auto; /* Agregar desplazamiento vertical si es necesario */
-    overflow: hidden;
-    max-height: 400px; /* Establece la altura máxima del textarea */
-    pointer-events: none; /* Deshabilita la interacción con los números de línea */
-    line-height: 1.5;
-}
-
-.code-editor {
-    display: flex;
+.error-token {
+    background-color: #FFCCCC; /* Cambia el color de fondo para los tokens de error */
 }
