@@ -22,7 +22,11 @@
   <div class="compiler-container">
     <div class="compiler">
       <div class="line-numbers" id="lineNumbers"></div>
-      <textarea id="codeInput" class="code-input" placeholder="Ingrese el código fuente a compilar" oninput="updateLineNumbers()" onkeydown="handleKeyDown(event)"></textarea>
+      <textarea id="codeInput" class="code-input" placeholder="Ingrese el código fuente a compilar" oninput="updateLineNumbers(); highlightKeywords()" onkeydown="handleKeyDown(event)"></textarea>
+      <pre id="highlightedCode" oninput="updateLineNumbers()" onkeydown="handleKeyDown(event)"></pre>
+  </div>
+
+  <div class="container">
     <div class="table-container">
       <table id="tokensTable" border="2" style="text-align: center; width: 100%; height: 90%;">
         <caption>TOKENS</caption>
@@ -43,53 +47,17 @@
     </table>
     </div>
     </div>
-    <div class="output"></div>
-    <div class="options">
-      <button class="compile-btn" onclick="compile()">Compilar</button>
-      <input type="file" id="fileInput" style="display: none;" accept=".ttp" onchange="handleFile()">
-      <label for="fileInput" class="upload-btn">Cargar Archivo</label>
-      <button class="save-btn" onclick="saveFile()">Guardar Archivo .ttp</button>
-    </div>
   </div>
-
-  <div class="output" id="tokensOutput"></div>
+  <div class="options">
+    <button class="compile-btn" onclick="compile()">Compilar</button>
+    <input type="file" id="fileInput" style="display: none;" accept=".ttp" onchange="handleFile()">
+    <label for="fileInput" class="upload-btn">Cargar Archivo</label>
+    <button class="save-btn" onclick="saveFile()">Guardar Archivo .ttp</button>
+  </div>
 
   <script src="./../js/cargarCodigo.js"></script>
   <script src="./../js/compiler.js"></script>
-  
-  <script>
-    const codeInput = document.getElementById('codeInput');
-    const lineNumbers = document.getElementById('lineNumbers');
+  <script src="./../js/areaTexto.js"></script>
 
-    // Función para sincronizar el desplazamiento vertical del textarea con los números de línea
-    function syncScroll() {
-      lineNumbers.scrollTop = codeInput.scrollTop;
-    }
-
-    // Agregar evento de desplazamiento al textarea
-    codeInput.addEventListener('scroll', syncScroll);
-  </script>
-
-  <script>
-  function updateLineNumbers() {
-    var code = document.getElementById("codeInput").value;
-    var lines = code.split("\n").length;
-    var lineNumbers = "";
-
-    for (var i = 1; i <= lines; i++) {
-      lineNumbers += i + "<br>";
-    }
-
-    document.getElementById("lineNumbers").innerHTML = lineNumbers;
-  }
-
-  function handleKeyDown(event) {
-    if (event.key === "Enter") {
-      updateLineNumbers();
-    }
-  }
-
-  window.onload = updateLineNumbers;
-  </script>
 </body>
 </html>
